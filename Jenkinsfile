@@ -82,10 +82,18 @@ pipeline {
             steps {
                 echo '📤 Stage 5: Pushing Docker image to Docker Hub...'
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_CREDENTIALS_ID}") {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
+                            echo "Logging in to Docker Hub..."
+                            echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                            
+                            echo "Pushing Docker images..."
                             docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:latest
                             docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}
+                            
+                            echo "Logging out from Docker Hub..."
+                            docker logout
+                            
                             echo "✅ Docker image pushed to Docker Hub successfully!"
                         '''
                     }
