@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        
+        PATH = "/usr/local/bin:${env.PATH}"
         DOCKER_HUB_USERNAME = 'saivenkat1507'
         DOCKER_IMAGE_NAME = 'todo-cli'
         ROLL_NUMBER = 'IMT2023501' 
